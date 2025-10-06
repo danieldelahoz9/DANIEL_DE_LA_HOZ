@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Inicio - EDINAUTOS</title>
+    <style>
+        body { font-family: Arial; background-color: #f2f2f2; text-align: center; margin-top: 80px; }
+        a { margin: 10px; text-decoration: none; color: white; background: #007bff; padding: 10px 15px; border-radius: 5px; }
+        .message { margin-top: 20px; }
+        .success { color: green; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <h1>Bienvenido al sistema EDINAUTOS</h1>
+    <div>
+        <a href="/register">Registrar usuario</a>
+        <a href="/login">Iniciar sesión</a>
+    </div>
+    <div class="message">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <p class="{{ category }}">{{ message }}</p>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+</body>
+</html>
