@@ -1,0 +1,15 @@
+ENDPOINTS - edinautos-api (demo en memoria)
+
+HTML / navegación:
+GET  /                 -> Página principal (links a register/login)
+GET  /register         -> Formulario de registro (HTML)
+POST /register         -> Procesa formulario de registro (HTML, redirige/flash)
+GET  /login            -> Formulario de login (HTML)
+POST /login            -> Procesa formulario de login (HTML, muestra mensaje en pantalla)
+
+API (JSON):
+POST /api/register     -> Registra usuario. Body JSON: {"username":"...","password":"..."}
+                       -> Respuestas: 201 (success), 409 (username exists), 400 (missing fields)
+
+POST /api/login        -> Iniciar sesión. Body JSON: {"username":"...","password":"..."}
+                       -> Respuestas: 200 (Autenticación satisfactoria), 401 (Error en autenticación), 400 (missing fields)

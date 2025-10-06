@@ -1,41 +1,51 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 app.secret_key = "clave_secreta_demo"
 
-# Almacenamiento temporal de usuarios (solo mientras corre el servidor)
+# Base temporal de usuarios
 usuarios = {}
 
-@app.route('/')
-def home():
-    return render_template('index.html')
+# Ruta para registrar usuarios (POST)
+@app.route('/api/register', methods=['POST'])
+def api_register():
+    data = request.get_json()
 
-@app.route('/register', methods=['GET', 'POST'])
-def register():
-    if request.method == 'POST':
-        usuario = request.form['username']
-        contrasena = request.form['password']
+    if not data or "username" not in data or "password" not in data:
+        return jsonify({"success": False, "message": "Datos incompletos"}), 400
 
-        if usuario in usuarios:
-            flash('El usuario ya está registrado.', 'error')
-        else:
-            usuarios[usuario] = contrasena
-            flash('Registro exitoso. Ahora puede iniciar sesión.', 'success')
-        return redirect(url_for('home'))
-    return render_template('register.html')
+    usuario = data["username"]
+    contrasena = data["password"]
 
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    if request.method == 'POST':
-        usuario = request.form['username']
-        contrasena = request.form['password']
+    if usuario in usuarios:
+        return jsonify({"success": False, "message": "El usuario ya existe"}), 400
 
-        if usuario in usuarios and usuarios[usuario] == contrasena:
-            flash('Autenticación satisfactoria', 'success')
-        else:
-            flash('Error en autenticación', 'error')
-        return redirect(url_for('home'))
-    return render_template('login.html')
+    usuarios[usuario] = contrasena
+    return jsonify({"success": True, "message": "Usuario registrado correctamente"}), 201
+
+
+# Ruta para iniciar sesión (POST)
+@app.route('/api/login', methods=['POST'])
+def api_login():
+    data = request.get_json()
+
+    if not data or "username" not in data or "password" not in data:
+        return jsonify({"success": False, "message": "Datos incompletos"}), 400
+
+    usuario = data["username"]
+    contrasena = data["password"]
+
+    if usuario in usuarios and usuarios[usuario] == contrasena:
+        return jsonify({"success": True, "message": "Autenticación satisfactoria"}), 200
+    else:
+        return jsonify({"success": False, "message": "Error en autenticación"}), 401
+
+
+# Ruta GET para ver usuarios (solo de prueba)
+@app.route('/api/users', methods=['GET'])
+def api_users():
+    return jsonify({"usuarios": list(usuarios.keys())})
+
 
 if __name__ == '__main__':
     app.run(debug=True)
